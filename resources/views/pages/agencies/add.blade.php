@@ -49,10 +49,6 @@
                     </ul>
                 </div>
             </div>
-            <?php 
-                if (!empty($not))
-                var_dump($not);
-            ?>
             <div class="kt-portlet__body">
                 <form action="{{ route('agencies.post.create') }}" method="POST" enctype="multipart/form-data">
                     <div class="tab-content">
@@ -102,6 +98,7 @@
                                                     <span class="form-text text-muted">Nếu giá trị là 0 thì sẽ không giới hạn thành viên trong đại lý.</span>
                                                 </div>
                                             </div>
+                                            
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label"></label>
                                                 <div class="col-lg-9 col-xl-6">

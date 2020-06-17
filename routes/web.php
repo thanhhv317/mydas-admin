@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,19 +15,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'UserController@dashboard')->name('users.get.dashboard')->middleware('CheckLogin');
 
 Route::get('/login', 'UserController@login')->name('users.get.login');
 Route::post('/login', 'UserController@postLogin')->name('users.post.postLogin');
+Route::get('/logout', 'UserController@logout')->name('users.get.logout');
 
-Route::group(['prefix' => 'agencies'], function(){
+Route::group(['prefix' => 'agencies', 'middleware' => 'CheckLogin'], function(){
     Route::get('', 'AgencyController@index')->name('agencies.get.index');
     Route::get('/create', 'AgencyController@create')->name('agencies.get.create');
     Route::post('/create', 'AgencyController@postCreate')->name('agencies.post.create');
 });
 
-Route::group(['prefix' => 'accounts'], function(){
+Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
     Route::get('', 'AccountController@index')->name('accounts.get.index');
+});
+
+Route::get('clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    return "Cache is cleared";
 });

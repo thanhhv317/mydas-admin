@@ -25,6 +25,9 @@
 
 		<!--end::Layout Skins -->
 		<link rel="shortcut icon" href="assets/media/logos/favicon.ico" />
+		
+		<!--end::Global Theme Styles -->
+		<link rel="stylesheet" type="text/css" href="assets/css/custom.css" />
 	</head>
 
 	<!-- end::Head -->

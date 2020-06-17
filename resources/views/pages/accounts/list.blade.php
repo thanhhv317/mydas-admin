@@ -9,13 +9,13 @@
         <div class="kt-container  kt-container--fluid ">
             <div class="kt-subheader__main">
                 <h3 class="kt-subheader__title">
-                    Quản lý tài khoản </h3>
+                    Quản lý tài khoản Telegram </h3>
                 <span class="kt-subheader__separator kt-hidden"></span>
                 <div class="kt-subheader__breadcrumbs">
                     <a href="#" class="kt-subheader__breadcrumbs-home"><i class="flaticon2-shelter"></i></a>
                     <span class="kt-subheader__breadcrumbs-separator"></span>
                     <a href="" class="kt-subheader__breadcrumbs-link">
-                        Danh sách đại lý </a>                    
+                        Danh sách tài khoản </a>                    
                 </div>
             </div>
         </div>
@@ -32,13 +32,13 @@
                         <i class="kt-font-brand flaticon2-line-chart"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Danh sách đại lý
+                        Danh sách Tài khoản telegram
                     </h3>
                 </div>
                 <div class="kt-portlet__head-toolbar">
                     <div class="kt-portlet__head-wrapper">
                         <div class="dropdown dropdown-inline">
-                            <a href="{{ route('agencies.get.create') }}" class="btn btn-brand btn-icon-sm">
+                            <a href="add-agency.php" class="btn btn-brand btn-icon-sm">
                                 <i class="flaticon2-plus"></i> Thêm mới
                             </a>
                         </div>
@@ -50,23 +50,22 @@
                 <!--begin: Search Form -->
                 <div class="kt-form kt-form--label-right kt-margin-t-20 kt-margin-b-10">
                     <div class="row align-items-center">
-                        <div class="col-xl-8 order-2 order-xl-1">
+                        <div class="col-xl-12 order-2 order-xl-1">
                             <div class="row align-items-center">
-                                <div class="col-md-12 kt-margin-b-20-tablet-and-mobile">
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm..." id="generalSearch">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý hoặc user..." id="generalSearch">
                                         <span class="kt-input-icon__icon kt-input-icon__icon--left">
                                             <span><i class="la la-search"></i></span>
                                         </span>
                                     </div>
                                 </div>
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
+                                    <div class="kt-input-icon kt-input-icon--left">
+                                        <button class="btn btn-info  btn_share_account" data-toggle="modal" data-target="#exampleModal" ><i class="flaticon-share"></i> Chia sẻ</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-xl-4 order-1 order-xl-2 kt-align-right">
-                            <a href="#" class="btn btn-default kt-hidden">
-                                <i class="la la-cart-plus"></i> New Order
-                            </a>
-                            <div class="kt-separator kt-separator--border-dashed kt-separator--space-lg d-xl-none"></div>
                         </div>
                     </div>
                 </div>
@@ -86,10 +85,46 @@
     <!-- end:: Content -->
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Chia sẻ tài khoản</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            
+            <h3> Số lượng tài khoản được chọn: <span class="kt-font-primary kt-font-bold count-account-share">1</span></h3>
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Chọn đại lý:</label>
+            <select multiple="" class="form-control" id="exampleSelect2">
+                <option>Dai ly 1</option>
+                <option>Dai ly 2</option>
+                <option>Dai ly 3</option>
+                <option>Dai ly 4</option>
+                <option>Dai ly 5</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-primary">Chia sẻ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 @section('javascript')
 <script>
-    "use strict";
+"use strict";
 // Class definition
 
 var KTDatatableRemoteAjaxDemo = function() {
@@ -117,7 +152,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 						},
 					},
 				},
-				pageSize: 10,
+				pageSize: 20,
 				serverPaging: true,
 				serverFiltering: true,
 				serverSorting: true,
@@ -143,11 +178,12 @@ var KTDatatableRemoteAjaxDemo = function() {
 				{
 					field: 'RecordID',
 					title: '#',
-					sortable: 'asc',
 					width: 30,
 					type: 'number',
-					selector: false,
-					textAlign: 'center',
+                    textAlign: 'center',
+                    selector: {
+                        class: 'kt-checkbox--solid'
+                    }
 				}, {
 					field: 'OrderID',
 					title: 'Order ID',
@@ -167,7 +203,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 					title: 'Company Name',
 				}, {
 					field: 'Status',
-					title: 'Status',
+					title: 'Thuộc đại lý',
 					// callback function support for column rendering
 					template: function(row) {
 						var status = {
@@ -183,7 +219,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 					},
 				}, {
 					field: 'Type',
-					title: 'Type',
+					title: 'Thuộc người dùng',
 					autoHide: false,
 					// callback function support for column rendering
 					template: function(row) {
@@ -203,7 +239,10 @@ var KTDatatableRemoteAjaxDemo = function() {
 					overflow: 'visible',
 					autoHide: false,
 					template: function() {
-						return `
+                        return `
+                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm"  data-toggle="modal" data-target="#exampleModal" title="Chia sẻ">
+							<i class="flaticon-share"></i>
+						</a>
 						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
 							<i class="flaticon2-paper"></i>
 						</a>
@@ -238,6 +277,18 @@ var KTDatatableRemoteAjaxDemo = function() {
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
 });
+
+$(".btn_share_account").on('click', () => {
+    let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
+    // console.log(data);
+    let listAccount = [];
+    $.when(data.forEach((x) => {
+        console.log(x.value);
+        listAccount.push(x.value);
+    })).done(() => {
+        $(".count-account-share").text(listAccount.length);
+    })
+})
 
 </script>
 
