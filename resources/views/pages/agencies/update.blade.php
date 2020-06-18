@@ -1,5 +1,5 @@
 @extends('layouts.index')
-@section('title', 'Thêm mới')
+@section('title', 'Cập nhật')
 @section('content')
 
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -18,7 +18,7 @@
                         Danh sách đại lý </a>
                     <span class="kt-subheader__breadcrumbs-separator"></span>
                     <a href="#" class="kt-subheader__breadcrumbs-link">
-                        Thêm đại lý </a>
+                        Cập nhật đại lý </a>
                     
                     <!-- <span class="kt-subheader__breadcrumbs-link kt-subheader__breadcrumbs-link--active">Active link</span> -->
                 </div>
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                 @endif
-                <form action="{{ route('agencies.post.create') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('agencies.post.postUpdate') }}" method="POST" enctype="multipart/form-data">
                     <div class="tab-content">
                         @csrf
                         <div class="tab-pane active" id="kt_user_edit_tab_1" role="tabpanel">
@@ -107,57 +107,47 @@
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Logo</label>
                                                 <div class="col-lg-9 col-xl-6">
                                                     <div class="kt-avatar kt-avatar--outline kt-avatar--circle-" id="kt_user_edit_avatar">
-                                                        <div class="kt-avatar__holder" style="background-image: url('https://via.placeholder.com/200x200');"></div>
+                                                        <div class="kt-avatar__holder" style="background-image: url('{{ isset($agency['logo']) ? $agency['logo'] : 'https://via.placeholder.com/200x200' }}'); background-size: 100% auto;background-position: center;"></div>
                                                         <label class="kt-avatar__upload" data-toggle="kt-tooltip" title="" data-original-title="Thay đổi logo">
                                                             <i class="fa fa-pen"></i>
-                                                            <input type="file" name="logo" require="" accept=".png, .jpg, .jpeg">
+                                                            <input type="file" name="logo" require="" accept=".png, .jpg, .jpeg" value="" >
                                                         </label>
                                                         <span class="kt-avatar__cancel" data-toggle="kt-tooltip" title="" data-original-title="Cancel avatar">
                                                             <i class="fa fa-times"></i>
                                                         </span>
+                                                            <input type="text" name="id" value="{{ $id }}" hidden>
+                                                            <input type="text" name="image" hidden value="{{ isset($agency['logo']) ? $agency['logo']: ''}}">
                                                     </div>
                                                 </div>                                              
                                             </div>
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Tên đại lý</label>
                                                 <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" type="text" required value="{{ old('name') ? old('name') : '' }}" name="name">
+                                                    <input class="form-control" type="text" required value="{{ isset($agency['fullname']) ? $agency['fullname'] : '' }}" name="name">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Title</label>
                                                 <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="text" value="{{ old('title') ? old('title') : '' }}" name="title">
+                                                    <input class="form-control" required type="text" value="{{ isset($agency['title']) ? $agency['title'] : '' }}" name="title">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Username</label>
                                                 <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="text" value="{{ old('username') ? old('username') : '' }}"  name="username">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="col-xl-3 col-lg-3 col-form-label">Mật khẩu</label>
-                                                <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="password"  name="password">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label class="col-xl-3 col-lg-3 col-form-label">Nhập lại mật khẩu</label>
-                                                <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="password"  name="repassword">
+                                                    <input class="form-control" required type="text" value="{{ isset($agency['username']) ? $agency['username'] : '' }}"  name="username">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Domain</label>
                                                 <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="text" value="{{ old('domain') ? old('domain') : '' }}"  name="domain">
+                                                    <input class="form-control" required type="text" value="{{ isset($agency['domain']) ? $agency['domain'] : '' }}"  name="domain">
                                                 </div>
                                             </div>
                                             <div class="form-group row">
                                                 <label class="col-xl-3 col-lg-3 col-form-label">Số lượng thành viên giới hạn</label>
                                                 <div class="col-lg-9 col-xl-6">
-                                                    <input class="form-control" required type="number" value="{{ old('amount') ? old('amount') : '' }}" name="amount" >
+                                                    <input class="form-control" required type="number" value="{{ isset($agency['limit_user']) ? $agency['limit_user'] : '' }}" name="amount" >
                                                     <span class="form-text text-muted">Nếu giá trị là 0 thì sẽ không giới hạn thành viên trong đại lý.</span>
                                                 </div>
                                             </div>
@@ -166,7 +156,7 @@
                                                 <label class="col-xl-3 col-lg-3 col-form-label"></label>
                                                 <div class="col-lg-9 col-xl-6">
                                                     <a href="{{ route('agencies.get.index') }}" class="btn btn-info">Trở về</a>
-                                                    <input type="submit" value="Thêm mới" class="btn btn-outline-primary">
+                                                    <input type="submit" value="Cập nhật" class="btn btn-outline-primary">
                                                 </div>
                                             </div>
                                         </div>

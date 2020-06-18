@@ -34,6 +34,7 @@
                     <h3 class="kt-portlet__head-title">
                         Danh sách đại lý
                     </h3>
+					@csrf
                 </div>
                 <div class="kt-portlet__head-toolbar">
                     <div class="kt-portlet__head-wrapper">
@@ -104,7 +105,11 @@ var KTDatatableRemoteAjaxDemo = function() {
 				type: 'remote',
 				source: {
 					read: {
-						url: 'https://keenthemes.com/metronic/tools/preview/api/datatables/demos/default.php',
+						url: '{{ route("agencies.post.getList") }}',
+						method: 'post',
+                        params: {
+                            _token: $("input[name='_token']").val(),
+                        },
 						// sample custom headers
 						// headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
 						map: function(raw) {
@@ -141,73 +146,45 @@ var KTDatatableRemoteAjaxDemo = function() {
 			// columns definition
 			columns: [
 				{
-					field: 'RecordID',
+					field: 'Id',
 					title: '#',
-					sortable: 'asc',
 					width: 30,
 					type: 'number',
 					selector: false,
 					textAlign: 'center',
 				}, {
-					field: 'OrderID',
-					title: 'Order ID',
+					field: 'logo',
+					title: 'logo',
+					width: 120,
+					template: function(data, index) {
+						return `<img class="img-thumbnail" src="${data.logo ? data.logo : 'https://via.placeholder.com/200x100'}">`
+					}
 				}, {
-					field: 'Country',
-					title: 'Country',
-					template: function(row) {
-						return row.Country + ' ' + row.ShipCountry;
-					},
-				}, {
-					field: 'ShipDate',
-					title: 'Ship Date',
-					type: 'date',
-					format: 'MM/DD/YYYY',
-				}, {
-					field: 'CompanyName',
-					title: 'Company Name',
-				}, {
-					field: 'Status',
-					title: 'Status',
-					// callback function support for column rendering
-					template: function(row) {
-						var status = {
-							1: {'title': 'Pending', 'class': 'kt-badge--brand'},
-							2: {'title': 'Delivered', 'class': ' kt-badge--danger'},
-							3: {'title': 'Canceled', 'class': ' kt-badge--primary'},
-							4: {'title': 'Success', 'class': ' kt-badge--success'},
-							5: {'title': 'Info', 'class': ' kt-badge--info'},
-							6: {'title': 'Danger', 'class': ' kt-badge--danger'},
-							7: {'title': 'Warning', 'class': ' kt-badge--warning'},
-						};
-						return '<span class="kt-badge ' + status[row.Status].class + ' kt-badge--inline kt-badge--pill">' + status[row.Status].title + '</span>';
-					},
-				}, {
-					field: 'Type',
-					title: 'Type',
-					autoHide: false,
-					// callback function support for column rendering
-					template: function(row) {
-						var status = {
-							1: {'title': 'Online', 'state': 'danger'},
-							2: {'title': 'Retail', 'state': 'primary'},
-							3: {'title': 'Direct', 'state': 'success'},
-						};
-						return '<span class="kt-badge kt-badge--' + status[row.Type].state + ' kt-badge--dot"></span>&nbsp;<span class="kt-font-bold kt-font-' + status[row.Type].state + '">' +
-								status[row.Type].title + '</span>';
-					},
-				}, {
+					field: 'title',
+					title: 'Tiêu đề',
+				},  {
+					field: 'fullname',
+					title: 'Tên đại lý',
+				},
+				{
+					field: 'domain',
+					title: 'domain',
+				},
+				{
 					field: 'Actions',
-					title: 'Actions',
+					title: 'Chức năng',
 					sortable: false,
 					width: 110,
 					overflow: 'visible',
 					autoHide: false,
-					template: function() {
+					template: function(data) {
+						let url = '{{ route('agencies.get.update',10 ) }}';
+						url = url.replace('10', data.Id);
 						return `
-						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
+						<a href="${url}" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
 							<i class="flaticon2-paper"></i>
 						</a>
-						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Xóa">
+						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm delete-agency" data-id="${data.Id}" title="Xóa">
 							<i class="flaticon2-trash"></i>
 						</a>`;
 					},
@@ -237,6 +214,49 @@ var KTDatatableRemoteAjaxDemo = function() {
 
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
+	$(".kt-datatable").on('click', '.delete-agency', function() {
+		let id = $(this).data("id");
+		Swal.fire({
+			title: 'Bạn có muốn xóa',
+			text: "Sẽ không thể khôi phục",
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Delete'
+			}).then((result) => {
+			if (result.value) {
+				$.ajax({
+					url: '{{ route("agencies.delete.deleteMe") }}',
+					method: 'DELETE',
+					data: {
+						id: id,
+						_token: $("input[name='_token']").val(),
+					},
+					success: function(data) {
+						console.log(data);
+						if (data.status == true) {
+							Swal.fire(
+								'Đã xóa!',
+								'Xóa thành công.',
+								'success'
+							);
+							setTimeout(() => {
+								location.reload();
+							}, 1000);
+						} else {
+							Swal.fire(
+								'Thất bại!',
+								'Vui lòng thử lại sau.',
+								'error'
+							)
+						}
+					}
+				});
+				
+			}
+		})
+	})
 });
 
 </script>

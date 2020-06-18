@@ -23,8 +23,12 @@ Route::get('/logout', 'UserController@logout')->name('users.get.logout');
 
 Route::group(['prefix' => 'agencies', 'middleware' => 'CheckLogin'], function(){
     Route::get('', 'AgencyController@index')->name('agencies.get.index');
+    Route::post('/getList', 'AgencyController@getList')->name('agencies.post.getList');
     Route::get('/create', 'AgencyController@create')->name('agencies.get.create');
     Route::post('/create', 'AgencyController@postCreate')->name('agencies.post.create');
+    Route::get('/update/{id}', 'AgencyController@update')->name('agencies.get.update');
+    Route::post('/update', 'AgencyController@postUpdate')->name('agencies.post.postUpdate');
+    Route::delete('delete', 'AgencyController@deleteMe')->name('agencies.delete.deleteMe');
 });
 
 Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
