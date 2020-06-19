@@ -64,8 +64,13 @@
         <div class="kt-header__topbar-wrapper" data-toggle="dropdown" data-offset="0px,0px">
             <div class="kt-header__topbar-user">
                 <span class="kt-header__topbar-welcome kt-hidden-mobile">Hi,</span>
-                <span class="kt-header__topbar-username kt-hidden-mobile">Sean</span>
-                <img alt="Pic" class="kt-radius-100" src="assets/media/users/300_25.jpg" />
+                <span class="kt-header__topbar-username kt-hidden-mobile">
+                    {{ isset(\Session::get('user_data')['username']) ? \Session::get('user_data')['username'] : '' }}
+                
+                </span>
+                <span class="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
+                {{ isset(\Session::get('user_data')['username']) ? substr(\Session::get('user_data')['username'],0,1) : 'A' }}
+                </span>
 
                 <!--use below badge element instead the user avatar to display username's first letter(remove kt-hidden class to display it) -->
 
@@ -77,33 +82,31 @@
             <!--begin: Head -->
             <div class="kt-user-card kt-user-card--skin-dark kt-notification-item-padding-x" style="background-image: url(assets/media/misc/bg-1.jpg)">
                 <div class="kt-user-card__avatar">
-                    <img class="kt-hidden" alt="Pic" src="assets/media/users/300_25.jpg" />
-
+                <span class="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
+                {{ isset(\Session::get('user_data')['username']) ? substr(\Session::get('user_data')['username'],0,1) : 'A' }}
+                </span>
                     <!--use below badge element instead the user avatar to display username's first letter(remove kt-hidden class to display it) -->
-                    <span class="kt-badge kt-badge--lg kt-badge--rounded kt-badge--bold kt-font-success">S</span>
                 </div>
                 <div class="kt-user-card__name">
-                    Sean Stone
+                {{ isset(\Session::get('user_data')['username']) ? \Session::get('user_data')['username'] : '' }}
                 </div>
-                <div class="kt-user-card__badge">
-                    <span class="btn btn-success btn-sm btn-bold btn-font-md">23 messages</span>
-                </div>
+                
             </div>
 
             <!--end: Head -->
 
             <!--begin: Navigation -->
             <div class="kt-notification">
-                <a href="custom/apps/user/profile-1/personal-information.html" class="kt-notification__item">
+                <a href="{{ route('user.get.showProfile') }}" class="kt-notification__item">
                     <div class="kt-notification__item-icon">
                         <i class="flaticon2-calendar-3 kt-font-success"></i>
                     </div>
                     <div class="kt-notification__item-details">
                         <div class="kt-notification__item-title kt-font-bold">
-                            My Profile
+                            Thông tin cá nhân
                         </div>
                         <div class="kt-notification__item-time">
-                            Account settings and more
+                            xem và tùy chỉnh
                         </div>
                     </div>
                 </a>

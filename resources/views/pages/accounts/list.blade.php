@@ -45,6 +45,46 @@
                     </div>
                 </div>
             </div>
+
+            @if(\Session::has('message'))
+                    <div class="alert alert-solid-success alert-bold fade show kt-margin-t-20 kt-margin-b-40" role="alert">
+                        <div class="alert-icon"><i class="fa fa-exclamation-triangle"></i></div>
+                        <div class="alert-text">{!! __('label.'.\Session::get('message'))!!}</div>
+                        <div class="alert-close">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="la la-close"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                @endif
+                @if (\Session::has('error') || $errors->any())
+                    <div class="alert alert-solid-danger alert-bold fade show kt-margin-t-20 kt-margin-b-40" role="alert">
+                        <div class="alert-icon"><i class="fa fa-exclamation-triangle"></i></div>
+            
+                        <div class="alert-text">
+                            <ul>
+                                @if(\Session::has('error'))
+                                    @if(is_array(\Session::get('error')))
+                                        @foreach(\Session::get('error') as $err)
+                                            <li>{{$err['message']}}</li>
+                                        @endforeach
+                                    @else    
+                                        <li>{{__('error.'.\Session::get('error'))}}</li>
+                                    @endif
+                                @endif
+                                @if($errors->any())
+                                    {!! implode('', $errors->all('<li>:message</li>')) !!}
+                                @endif
+                            </ul>
+                        </div>
+            
+                        <div class="alert-close">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="la la-close"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                @endif
             <div class="kt-portlet__body">
 
                 <!--begin: Search Form -->

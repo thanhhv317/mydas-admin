@@ -14,5 +14,6 @@ return [
     '411'   => 'Bạn không có quyền thực hiện tính năng này',
     '412'   => 'Username đã tồn tại',
     '413'   => 'Domain đã tồn tại',
+    '701'   => 'Bạn không có quyền sử dụng chức năng này',
 
 ];

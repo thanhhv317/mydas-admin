@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Http;
 
 // API
 
-const API = '192.168.1.29:2020/';
+const API = 'http://localhost:2020/';
 
 if (!function_exists('api')) {
     function api($url, $method = 'GET', $parameters = [], $token='') {

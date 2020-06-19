@@ -79,48 +79,29 @@ class AgencyController extends Controller
     public function getList(Request $request) {
 
         $param = $request->all();
-        if($param['pagination'] == 0  && $param['length'] > 0){
-            $page = 1;
-            $limit = $param['length'];
-        }
-        else{
-            $page = ($param['start'] / $param['length'] ) +1 ;
-            $limit = $param['length'];
-        }
-         // Get value to search 
-        //  $arrsearch =[] ;
-        //  if (isset($param['columns'][1]['search']['value'])){
-        //     $encodeSearch = json_decode($param['columns'][1]['search']['value'], true);
-        //     foreach( $encodeSearch as $key => $search){
-        //         if(isset($search) ){ $arrsearch[$key] = $search ;}
-        //     }
-        //  }
-        //  if(isset($param['order'][0]['column']) && isset($param['order'][0]['dir'])){
-        //     $arrsearch['order_column'] = isset( $param['columns'][$param['order'][0]['column']]['data']) ?  $param['columns'][$param['order'][0]['column']]['data'] : '';
-        //     $arrsearch['order_by'] = $param['order'][0]['dir'] ;
-        //  }
-        //  $dataList = [
-        //     "page" => $page,
-        //     "limit" => $limit,
-        //     'keyword' => isset($arrsearch['keyword'])?$arrsearch['keyword']:'',
-        //     "status" => isset($arrsearch['status'])? $arrsearch['status'] :'',  
-        //     'from_date' => isset($arrsearch['from_date'])?(date('yy-m-d', strtotime($arrsearch['from_date']))):'',
-        //     'to_date' => isset($arrsearch['to_date'])? (date('yy-m-d', strtotime($arrsearch['to_date']))):'',  
-        //     'payment_method_id' => isset($arrsearch['payment_method_id']) ? $arrsearch['payment_method_id'] :'',  
-        //     "order_id" => isset($arrsearch['order_id'])? $arrsearch['order_id'] :'', 
-        //     "order_by" => isset($arrsearch['order_by'])? $arrsearch['order_by'] :'', 
-        //     "order_column" => isset($arrsearch['order_column'])? $arrsearch['order_column'] :'', 
-        // ];
+        
+        $page = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
 
-        $result = api('admin/agency', 'GET', []);
+        //  Get value to search 
+        $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
+        
+        $dataList = [
+            "page" => $page,
+            "limit" => $perpage,
+            "fullname" => $searchValue
+        ];
+
+        $result = api('admin/agency', 'GET', $dataList);
         if ($result['status']) {
+            $total = isset($result['total']) ? $result['total'] : count($result['data']);
             $object = [
                 "meta" => [
-                    "page" => 1,
-                    "pages" => 1,
-                    "perpage"   => 10,
-                    "total"     => 20,
-                    "request"   => $param
+                    "page" => $page,
+                    "pages" => ceil($total / $perpage),
+                    "perpage"   => $perpage,
+                    "total"     => $total,
+                    "request"   => $param 
                 ],
                 "data"  => $result['data']
             ];

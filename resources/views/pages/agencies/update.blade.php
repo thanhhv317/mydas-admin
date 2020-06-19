@@ -73,7 +73,7 @@
                                             <li>{{$err['message']}}</li>
                                         @endforeach
                                     @else    
-                                        <li>{{__('error.error'.\Session::get('error'))}}</li>
+                                        <li>{{__('error.'.\Session::get('error'))}}</li>
                                     @endif
                                 @endif
                                 @if($errors->any())
