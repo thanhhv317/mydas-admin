@@ -32,7 +32,7 @@
                         <i class="kt-font-brand flaticon2-line-chart"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Danh sách Tài khoản
+                        Danh sách Tài khoản telegram
                     </h3>
                 </div>
                 <div class="kt-portlet__head-toolbar">
@@ -93,12 +93,17 @@
                     <div class="row align-items-center">
                         <div class="col-xl-12 order-2 order-xl-1">
                             <div class="row align-items-center">
-                                <div class="col-md-12 kt-margin-b-20-tablet-and-mobile">
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý " id="generalSearch">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý hoặc user..." id="generalSearch">
                                         <span class="kt-input-icon__icon kt-input-icon__icon--left">
                                             <span><i class="la la-search"></i></span>
                                         </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
+                                    <div class="kt-input-icon kt-input-icon--left">
+                                        <button class="btn btn-info  btn_share_account" data-toggle="modal" data-target="#exampleModal" ><i class="flaticon-share"></i> Chia sẻ</button>
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +180,7 @@ var KTDatatableRemoteAjaxDemo = function() {
 				type: 'remote',
 				source: {
 					read: {
-                        url: '{{ route("accounts.post.getList") }}',
+                        url: '{{ route("accounts.post.showListAccountTele") }}',
                         method: 'post',
                         params: {
                             _token: $("input[name='_token']").val(),
@@ -221,22 +226,41 @@ var KTDatatableRemoteAjaxDemo = function() {
 					width: 30,
 					type: 'number',
                     textAlign: 'center',
-				},  {
-					field: 'username',
-					title: 'Username',
-					
-				}, {
-					field: 'email',
-					title: 'Email',
-				}, {
+                    selector: {
+                        class: 'kt-checkbox--solid'
+                    }
+                },  
+                {
+					field: 'first_name',
+					title: 'First name',
+                }, 
+                {
+					field: 'last_name',
+					title: 'Last name',
+                }, 
+                {
 					field: 'phone',
 					title: 'Điện thoại',
-				}, {
-					field: 'agencyname',
-					title: 'Thuộc đại lý',
-					
-					
-				}, {
+                }, 
+                {
+					field: 'fullname',
+                    title: 'Thuộc đại lý',
+                    template: function(data) {
+                        
+                        return `
+                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.fullname}</span></span>
+                        `
+                    }
+                }, 
+                {
+					field: 'username',
+                    title: 'Của người dùng',
+                    template: function(data) {
+                        return `
+                        <span><span class="kt-font-bold kt-font-primary">${data.username}</span></span>                        `;
+                    }
+				},
+                {
 					field: 'Actions',
 					title: 'Actions',
 					sortable: false,
@@ -245,7 +269,9 @@ var KTDatatableRemoteAjaxDemo = function() {
 					autoHide: false,
 					template: function() {
                         return `
-                       
+                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm"  data-toggle="modal" data-target="#exampleModal" title="Chia sẻ">
+							<i class="flaticon-share"></i>
+						</a>
 						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
 							<i class="flaticon2-paper"></i>
 						</a>
@@ -280,6 +306,18 @@ var KTDatatableRemoteAjaxDemo = function() {
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
 });
+
+$(".btn_share_account").on('click', () => {
+    let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
+    // console.log(data);
+    let listAccount = [];
+    $.when(data.forEach((x) => {
+        console.log(x.value);
+        listAccount.push(x.value);
+    })).done(() => {
+        $(".count-account-share").text(listAccount.length);
+    })
+})
 
 </script>
 

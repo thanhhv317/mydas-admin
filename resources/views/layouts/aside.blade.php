@@ -34,7 +34,8 @@
 									<div class="kt-menu__submenu "><span class="kt-menu__arrow"></span>
 										<ul class="kt-menu__subnav">
 											<li class="kt-menu__item  kt-menu__item--parent" aria-haspopup="true"><span class="kt-menu__link"><span class="kt-menu__link-text">Custom</span></span></li>
-											<li class="kt-menu__item {{ request()->routeIs('accounts.get.index') ? 'kt-menu__item--active' : '' }}" aria-haspopup="true"><a href="{{ route('accounts.get.index') }}" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">Danh sách tài khoản</span></a></li>
+											<li class="kt-menu__item {{ request()->routeIs('accounts.get.index') ? 'kt-menu__item--active' : '' }}" aria-haspopup="true"><a href="{{ route('accounts.get.index') }}" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">Tài khoản người dùng</span></a></li>
+											<li class="kt-menu__item {{ request()->routeIs('accounts.get.listAccountTele') ? 'kt-menu__item--active' : '' }}" aria-haspopup="true"><a href="{{ route('accounts.get.listAccountTele') }}" class="kt-menu__link "><i class="kt-menu__link-bullet kt-menu__link-bullet--dot"><span></span></i><span class="kt-menu__link-text">Tài khoản Telegram</span></a></li>
 										</ul>
 									</div>
 								</li>

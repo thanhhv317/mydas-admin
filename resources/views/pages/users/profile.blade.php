@@ -192,7 +192,7 @@
                                                 <div class="row">
                                                     <div class="col-lg-3 col-xl-3"></div>
                                                     <div class="col-lg-9 col-xl-9">
-                                                        <button type="submit" class="btn btn-label-brand btn-bold">Save changes</button>
+                                                        <button type="submit" class="btn btn-label-brand btn-bold">Cập nhật</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -208,12 +208,7 @@
                             <div class="kt-form__body">
                                 <div class="kt-section kt-section--first">
                                     <div class="kt-section__body">
-                                        <div class="row">
-                                            <label class="col-xl-3"></label>
-                                            <div class="col-lg-9 col-xl-6">
-                                                <h3 class="kt-section__title kt-section__title-sm">Account:</h3>
-                                            </div>
-                                        </div>
+                                        
                                         <div class="form-group row">
                                             <label class="col-xl-3 col-lg-3 col-form-label">Username</label>
                                             <div class="col-lg-9 col-xl-6">
@@ -284,7 +279,7 @@
                                     <div class="row">
                                         <div class="col-lg-3 col-xl-3"></div>
                                         <div class="col-lg-9 col-xl-9">
-                                            <button type="submit" class="btn btn-label-brand btn-bold">Save changes</button>
+                                            <button type="submit" class="btn btn-label-brand btn-bold">Cập nhật</button>
                                         </div>
                                     </div>
                                 </div>

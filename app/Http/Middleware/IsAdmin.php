@@ -15,7 +15,7 @@ class IsAdmin
      */
     public function handle($request, Closure $next)
     {
-        if(!session()->has('user_data')['level'] || session()->has('user_data')['level'] > 1){
+        if(!session()->has('user_data') || session()->get('user_data')['level'] > 1){
             return redirect()->back()->with("error", '701')->withInput($request->input());
         }
         return $next($request);

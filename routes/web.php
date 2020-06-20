@@ -39,7 +39,12 @@ Route::group(['prefix' => 'agencies', 'middleware' => 'CheckLogin'], function(){
 });
 
 Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
-    Route::get('', 'AccountController@index')->name('accounts.get.index');
+    Route::get('', 'AccountController@index')->name('accounts.get.index')->middleware('IsAdmin');
+    Route::post('/getList', 'AccountController@getList')->name('accounts.post.getList')->middleware('IsAdmin');
+
+    //tele
+    Route::get('/account-tele', 'AccountController@listAccountTele')->name('accounts.get.listAccountTele');
+    Route::post('/show-account-tele', 'AccountController@showListAccountTele')->name('accounts.post.showListAccountTele');
 });
 
 Route::get('clear-cache', function () {
