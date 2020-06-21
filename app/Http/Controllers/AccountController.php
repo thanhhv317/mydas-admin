@@ -47,12 +47,47 @@ class AccountController extends Controller
     //TELE
 
     public function listAccountTele() { 
-        return view('pages.accounts.list-tele');
+        $result = api('admin/agency', 'GET');
+        if ($result['status'] == false) {
+            return redirect()->back()->with("error", $result['code'])->withInput($request->input());
+        }
+        $agency = isset($result['data']) ? $result['data'] : '';
+        
+        return view('pages.accounts.list-tele', ['agency' => $agency]);
     }
 
-    public function showListAccountTele(Request $reques) {
+    public function showListAccountTele(Request $request) {
         $result = api('admin/account-tele', 'GET');
-        return $result;
+        
+        $param = $request->all();
+        
+        $page = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
+
+        //  Get value to search 
+        $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
+        
+        $dataList = [
+            "limit" => $perpage,
+            "perpage" => $page - 1,
+            "agency" => $searchValue
+        ];
+
+        $result = api('admin/account-tele', 'GET', $dataList);
+        if ($result['status']) {
+            $total = isset($result['total']) ? $result['total'] : count($result['data']);
+            $object = [
+                "meta" => [
+                    "page" => $page,
+                    "pages" => ceil($total / $perpage),
+                    "perpage"   => $perpage,
+                    "total"     => $total,
+                ],
+                "data"  => $result['data']
+            ];
+        }
+
+        return ($object);
     }
 
 

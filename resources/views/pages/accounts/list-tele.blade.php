@@ -36,13 +36,13 @@
                     </h3>
                 </div>
                 <div class="kt-portlet__head-toolbar">
-                    <div class="kt-portlet__head-wrapper">
+                    <!-- <div class="kt-portlet__head-wrapper">
                         <div class="dropdown dropdown-inline">
-                            <a href="add-agency.php" class="btn btn-brand btn-icon-sm">
+                            <a href="" class="btn btn-brand btn-icon-sm">
                                 <i class="flaticon2-plus"></i> Thêm mới
                             </a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -95,7 +95,7 @@
                             <div class="row align-items-center">
                                 <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý hoặc user..." id="generalSearch">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý, người dùng hoặc số điện thoại" id="generalSearch">
                                         <span class="kt-input-icon__icon kt-input-icon__icon--left">
                                             <span><i class="la la-search"></i></span>
                                         </span>
@@ -144,19 +144,19 @@
           </div>
           <div class="form-group">
             <label for="message-text" class="col-form-label">Chọn đại lý:</label>
-            <select multiple="" class="form-control" id="exampleSelect2">
-                <option>Dai ly 1</option>
-                <option>Dai ly 2</option>
-                <option>Dai ly 3</option>
-                <option>Dai ly 4</option>
-                <option>Dai ly 5</option>
+            <select multiple="" class="form-control" name="list-agency" id="exampleSelect2">
+                @if(isset($agency))
+                @foreach($agency as $key => $value)
+                    <option value="{{ $value['Id'] }}">{{ $value['fullname'] }}</option>
+                @endforeach
+                @endif
             </select>
           </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary">Chia sẻ</button>
+        <button type="button" class="btn btn-primary btn-sharing-account">Chia sẻ</button>
       </div>
     </div>
   </div>
@@ -200,9 +200,16 @@ var KTDatatableRemoteAjaxDemo = function() {
 				pageSize: 20,
 				serverPaging: true,
 				serverFiltering: true,
-				serverSorting: true,
+                serverSorting: true,
+                
 			},
-
+            toolbar: {
+                items: {
+                    pagination: {
+                        pageSizeSelect: [10, 20, 50, 100, -1]
+                    }
+                }
+            },
 			// layout definition
 			layout: {
 				scroll: false,
@@ -305,19 +312,40 @@ var KTDatatableRemoteAjaxDemo = function() {
 
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
+
+    const dataAccount = [];
+
+    $(".btn_share_account").on('click', () => {
+        var listAccount = [];
+        let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
+        $.when(data.forEach((x) => {
+            listAccount.push(x.value);
+        })).done(() => {
+            $(".count-account-share").text(listAccount.length);
+        })
+
+        dataAccount.push(listAccount);
+        // console.log(listAccount);
+    })
+
+    $(".btn-sharing-account").click(() => {
+        let listAgency = $("select[name='list-agency']").val();
+        console.log(dataAccount);
+        if (dataAccount !== undefined && dataAccount.length != 0 ) {
+            // SHARING
+            console.log(listAgency);
+
+        }
+        else {
+            Swal.fire(
+                'Lỗi',
+                'Vui lòng chọn tài khoản.',
+                'error'
+            );
+        }
+    })
 });
 
-$(".btn_share_account").on('click', () => {
-    let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
-    // console.log(data);
-    let listAccount = [];
-    $.when(data.forEach((x) => {
-        console.log(x.value);
-        listAccount.push(x.value);
-    })).done(() => {
-        $(".count-account-share").text(listAccount.length);
-    })
-})
 
 </script>
 

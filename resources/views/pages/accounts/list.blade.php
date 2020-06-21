@@ -121,42 +121,6 @@
     <!-- end:: Content -->
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Chia sẻ tài khoản</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            
-            <h3> Số lượng tài khoản được chọn: <span class="kt-font-primary kt-font-bold count-account-share">1</span></h3>
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="col-form-label">Chọn đại lý:</label>
-            <select multiple="" class="form-control" id="exampleSelect2">
-                <option>Dai ly 1</option>
-                <option>Dai ly 2</option>
-                <option>Dai ly 3</option>
-                <option>Dai ly 4</option>
-                <option>Dai ly 5</option>
-            </select>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary">Chia sẻ</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 @endsection
 @section('javascript')
 <script>
@@ -233,9 +197,12 @@ var KTDatatableRemoteAjaxDemo = function() {
 					title: 'Điện thoại',
 				}, {
 					field: 'agencyname',
-					title: 'Thuộc đại lý',
-					
-					
+                    title: 'Thuộc đại lý',
+                    template: function(data) {
+                        return `
+                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.agencyname}</span></span>
+                        `
+                    }
 				}, {
 					field: 'Actions',
 					title: 'Actions',
