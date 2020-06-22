@@ -41,6 +41,15 @@ Route::group(['prefix' => 'agencies', 'middleware' => 'CheckLogin'], function(){
 Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
     Route::get('', 'AccountController@index')->name('accounts.get.index')->middleware('IsAdmin');
     Route::post('/getList', 'AccountController@getList')->name('accounts.post.getList')->middleware('IsAdmin');
+    Route::get('/create', 'AccountController@create')->name('accounts.get.create')->middleware('IsAdmin');
+    Route::post('/create', 'AccountController@postCreate')->name('accounts.post.create')->middleware('IsAdmin');
+    Route::get('/update/{id}', 'AccountController@update')->name('accounts.get.update')->middleware('IsAdmin');
+    Route::post('/update', 'AccountController@postUpdate')->name('accounts.get.postUpdate')->middleware('IsAdmin');
+    Route::delete('/delete', 'AccountController@deleteMe')->name('accounts.delete.deleteMe')->middleware('IsAdmin');
+
+    Route::get('/list-of-user/{id}', 'AccountController@showListTeleOfUser')->name('accounts.get.showListTeleOfUser')->middleware('IsAdmin');
+    Route::post('/list-of-user', 'AccountController@postShowListTeleOfUser')->name('accounts.post.postShowListTeleOfUser')->middleware('IsAdmin');
+
 
     //tele
     Route::get('/account-tele', 'AccountController@listAccountTele')->name('accounts.get.listAccountTele');

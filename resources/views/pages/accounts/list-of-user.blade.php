@@ -32,17 +32,17 @@
                         <i class="kt-font-brand flaticon2-line-chart"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Danh sách Tài khoản
+                        Danh sách Tài khoản telegram của {{ isset($account['username']) ? $account['username'] : '' }}
                     </h3>
                 </div>
                 <div class="kt-portlet__head-toolbar">
-                    <div class="kt-portlet__head-wrapper">
+                    <!-- <div class="kt-portlet__head-wrapper">
                         <div class="dropdown dropdown-inline">
-                            <a href="{{ route('accounts.get.create') }}" class="btn btn-brand btn-icon-sm">
+                            <a href="" class="btn btn-brand btn-icon-sm">
                                 <i class="flaticon2-plus"></i> Thêm mới
                             </a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -93,12 +93,17 @@
                     <div class="row align-items-center">
                         <div class="col-xl-12 order-2 order-xl-1">
                             <div class="row align-items-center">
-                                <div class="col-md-12 kt-margin-b-20-tablet-and-mobile">
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý " id="generalSearch">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm theo đại lý, người dùng hoặc số điện thoại" id="generalSearch">
                                         <span class="kt-input-icon__icon kt-input-icon__icon--left">
                                             <span><i class="la la-search"></i></span>
                                         </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
+                                    <div class="kt-input-icon kt-input-icon--left">
+                                        <button class="btn btn-info  btn_share_account" data-toggle="modal" data-target="#exampleModal" ><i class="flaticon-share"></i> Chia sẻ</button>
                                     </div>
                                 </div>
                             </div>
@@ -121,6 +126,42 @@
     <!-- end:: Content -->
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Chia sẻ tài khoản</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            
+            <h3> Số lượng tài khoản được chọn: <span class="kt-font-primary kt-font-bold count-account-share">1</span></h3>
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Chọn đại lý:</label>
+            <select multiple="" class="form-control" name="list-agency" id="exampleSelect2">
+                @if(isset($agency))
+                @foreach($agency as $key => $value)
+                    <option value="{{ $value['Id'] }}">{{ $value['fullname'] }}</option>
+                @endforeach
+                @endif
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-primary btn-sharing-account">Chia sẻ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 @section('javascript')
 <script>
@@ -139,10 +180,11 @@ var KTDatatableRemoteAjaxDemo = function() {
 				type: 'remote',
 				source: {
 					read: {
-                        url: '{{ route("accounts.post.getList") }}',
+                        url: '{{ route("accounts.post.postShowListTeleOfUser") }}',
                         method: 'post',
                         params: {
                             _token: $("input[name='_token']").val(),
+                            id: {{ isset($id) ? $id : '' }}
                         },
 						// sample custom headers
 						// headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
@@ -159,9 +201,16 @@ var KTDatatableRemoteAjaxDemo = function() {
 				pageSize: 20,
 				serverPaging: true,
 				serverFiltering: true,
-				serverSorting: true,
+                serverSorting: true,
+                
 			},
-
+            toolbar: {
+                items: {
+                    pagination: {
+                        pageSizeSelect: [10, 20, 50, 100, -1]
+                    }
+                }
+            },
 			// layout definition
 			layout: {
 				scroll: false,
@@ -185,41 +234,40 @@ var KTDatatableRemoteAjaxDemo = function() {
 					width: 30,
 					type: 'number',
                     textAlign: 'center',
-				},  {
-					field: 'username',
-                    title: 'Username',
-                    template: function(data) {
-                        let url = '{{ route('accounts.get.showListTeleOfUser', 10) }}';
-                        url = url.replace('10', data.Id);
-                        return `
-                        <span style="width: 132px;"> <span><span class="kt-font-bold kt-font-primary"><a href="${url}">${data.username}</a></span></span></span>                        
-                        `
+                    selector: {
+                        class: 'kt-checkbox--solid'
                     }
-					
-				}, {
-					field: 'email',
-					title: 'Email',
-				}, {
+                },  
+                {
+					field: 'first_name',
+					title: 'First name',
+                }, 
+                {
+					field: 'last_name',
+					title: 'Last name',
+                }, 
+                {
 					field: 'phone',
 					title: 'Điện thoại',
-				}, {
-					field: 'agencyname',
+                }, 
+                {
+					field: 'fullname',
                     title: 'Thuộc đại lý',
                     template: function(data) {
+                        
                         return `
-                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.agencyname}</span></span>
+                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.fullname}</span></span>
                         `
                     }
                 }, 
                 {
-					field: 'total',
-                    title: 'Tài khoản telegram',
+					field: 'username',
+                    title: 'Của người dùng',
                     template: function(data) {
                         return `
-                        <span style="width: 114px;"><span class="kt-badge  kt-badge--primary kt-badge--inline kt-badge--pill">${data.total != null ? data.total : 0}</span></span>
-                        `
+                        <span><span class="kt-font-bold kt-font-primary">${data.username}</span></span>                        `;
                     }
-				},                 
+				},
                 {
 					field: 'Actions',
 					title: 'Actions',
@@ -227,15 +275,15 @@ var KTDatatableRemoteAjaxDemo = function() {
 					width: 110,
 					overflow: 'visible',
 					autoHide: false,
-					template: function(data) {
-                        let url = '{{ route('accounts.get.update',10 ) }}';
-						url = url.replace('10', data.Id);
+					template: function() {
                         return `
-                       
-						<a href="${url}" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
+                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm"  data-toggle="modal" data-target="#exampleModal" title="Chia sẻ">
+							<i class="flaticon-share"></i>
+						</a>
+						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
 							<i class="flaticon2-paper"></i>
 						</a>
-						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm delete-account"  data-id="${data.Id}" title="Xóa">
+						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Xóa">
 							<i class="flaticon2-trash"></i>
 						</a>`;
 					},
@@ -264,51 +312,41 @@ var KTDatatableRemoteAjaxDemo = function() {
 }();
 
 jQuery(document).ready(function() {
-    KTDatatableRemoteAjaxDemo.init();
-    $(".kt-datatable").on('click', '.delete-account', function() {
-		let id = $(this).data("id");
-		Swal.fire({
-			title: 'Bạn có muốn xóa',
-			text: "Sẽ không thể khôi phục",
-			icon: 'question',
-			showCancelButton: true,
-			confirmButtonColor: '#3085d6',
-			cancelButtonColor: '#d33',
-			confirmButtonText: 'Delete'
-			}).then((result) => {
-			if (result.value) {
-				$.ajax({
-					url: '{{ route("accounts.delete.deleteMe") }}',
-					method: 'DELETE',
-					data: {
-						id: id,
-						_token: $("input[name='_token']").val(),
-					},
-					success: function(data) {
-						console.log(data);
-						if (data.status == true) {
-							Swal.fire(
-								'Đã xóa!',
-								'Xóa thành công.',
-								'success'
-							);
-							setTimeout(() => {
-								location.reload();
-							}, 1000);
-						} else {
-							Swal.fire(
-								'Thất bại!',
-								'Vui lòng thử lại sau.',
-								'error'
-							)
-						}
-					}
-				});
-				
-			}
-		})
-	})
+	KTDatatableRemoteAjaxDemo.init();
+
+    const dataAccount = [];
+
+    $(".btn_share_account").on('click', () => {
+        var listAccount = [];
+        let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
+        $.when(data.forEach((x) => {
+            listAccount.push(x.value);
+        })).done(() => {
+            $(".count-account-share").text(listAccount.length);
+        })
+
+        dataAccount.push(listAccount);
+        // console.log(listAccount);
+    })
+
+    $(".btn-sharing-account").click(() => {
+        let listAgency = $("select[name='list-agency']").val();
+        console.log(dataAccount);
+        if (dataAccount !== undefined && dataAccount.length != 0 ) {
+            // SHARING
+            console.log(listAgency);
+
+        }
+        else {
+            Swal.fire(
+                'Lỗi',
+                'Vui lòng chọn tài khoản.',
+                'error'
+            );
+        }
+    })
 });
+
 
 </script>
 
