@@ -54,12 +54,14 @@ Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
     //tele
     Route::get('/account-tele', 'AccountController@listAccountTele')->name('accounts.get.listAccountTele');
     Route::post('/show-account-tele', 'AccountController@showListAccountTele')->name('accounts.post.showListAccountTele');
+    Route::post('/share-to-agency', 'AccountController@shareToAgency')->name('accounts.post.shareToAgency');
 });
 
 Route::get('clear-cache', function () {
-    Artisan::call('cache:clear');
-    Artisan::call('config:clear');
-    Artisan::call('config:cache');
-    Artisan::call('view:clear');
+    Artisan::call('optimize');
+    // Artisan::call('cache:clear');
+    // Artisan::call('config:clear');
+    // Artisan::call('config:cache');
+    // Artisan::call('view:clear');
     return "Cache is cleared";
 });

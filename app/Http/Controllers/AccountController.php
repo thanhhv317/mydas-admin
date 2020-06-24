@@ -7,61 +7,64 @@ use Validator;
 
 class AccountController extends Controller
 {
-    public function index() {
-        
+    public function index()
+    {
+
         return view('pages.accounts.list');
     }
 
-    public function getList(Request $request) {
-        
+    public function getList(Request $request)
+    {
+
         $param = $request->all();
-        
-        $page = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
-        $perpage = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
+
+        $page       = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage    = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
 
         //  Get value to search 
         $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
-        
+
         $dataList = [
-            "limit" => $perpage,
-            "perpage" => $page - 1,
-            "agency" => $searchValue
+            "limit"     => $perpage,
+            "perpage"   => $page - 1,
+            "agency"    => $searchValue
         ];
 
         $result = api('admin/account', 'GET', $dataList);
         if ($result['status']) {
-            $total = isset($result['total']) ? $result['total'] : count($result['data']);
+            $total  = isset($result['total']) ? $result['total'] : count($result['data']);
             $object = [
                 "meta" => [
-                    "page" => $page,
-                    "pages" => ceil($total / $perpage),
+                    "page"      => $page,
+                    "pages"     => ceil($total / $perpage),
                     "perpage"   => $perpage,
                     "total"     => $total,
                 ],
-                "data"  => $result['data']
+                "data" => $result['data']
             ];
         }
-
         return ($object);
     }
 
-    public function create() {
+    public function create()
+    {
         $agency = $this->getListAgency();
         return view('pages.accounts.add', ['agency' => $agency]);
     }
 
-    public function postCreate(Request $request) {
-        $param      = $request->all();
+    public function postCreate(Request $request)
+    {
+        $param = $request->all();
 
-        $validation = Validator::make($param, 
-        [
-            'username'      => 'required',
-            'password'      => 'required',
-            'repassword'    => 'required|same:password',
-        ],
-        [
-            'required'  => 'Các trường không được để trống!',
-        ]);
+        $validation = Validator::make($param,
+            [
+                'username'      => 'required',
+                'password'      => 'required',
+                'repassword'    => 'required|same:password',
+            ],
+            [
+                'required'      => 'Các trường không được để trống!',
+            ]);
 
         if ($validation->fails()) {
             return redirect()->back()->withErrors($validation)->withInput();
@@ -84,32 +87,33 @@ class AccountController extends Controller
         $result = \api('admin/account', 'POST', $data);
         if (!$result['status']) {
             return redirect()->back()->with("error", $result['code'])->withInput($request->input());
-        } 
-        return  redirect()->back()->with('message', 'success');
-
+        }
+        return redirect()->back()->with('message', 'success');
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
         $result = \api('admin/account', 'GET', ['id' => $request->id]);
         if ($result['status'] == false) {
             return redirect()->back()->with("error", $result['code'])->withInput($request->input());
         }
         $account = isset($result['data']) ? $result['data'][0] : '';
-        $id = isset($request->id) ? $request->id : '';
-        $agency = $this->getListAgency();
+        $id      = isset($request->id) ? $request->id : '';
+        $agency  = $this->getListAgency();
         return view('pages.accounts.update', ['account' => $account, 'id' => $id, 'agency' => $agency]);
     }
 
-    public function postUpdate(Request $request) {
-        $param      = $request->all();
+    public function postUpdate(Request $request)
+    {
+        $param = $request->all();
 
-        $validation = Validator::make($param, 
-        [
-            'repassword'    => 'same:password',
-        ],
-        [
-            'same'  => 'Mật khẩu không khớp',
-        ]);
+        $validation = Validator::make($param,
+            [
+                'repassword' => 'same:password',
+            ],
+            [
+                'same'       => 'Mật khẩu không khớp',
+            ]);
 
         if ($validation->fails()) {
             return redirect()->back()->withErrors($validation)->withInput();
@@ -132,20 +136,22 @@ class AccountController extends Controller
         $result = \api('admin/account', 'PUT', $data);
         if (!$result['status']) {
             return redirect()->back()->with("error", $result['code'])->withInput($request->input());
-        } 
-        return  redirect()->back()->with('message', 'success');
+        }
+        return redirect()->back()->with('message', 'success');
     }
 
-    public function deleteMe(Request $request) {
+    public function deleteMe(Request $request)
+    {
         if ($request->ajax()) {
-            $id = $request->id;
-            $data = ['id' => $id];
+            $id     = $request->id;
+            $data   = ['id' => $id];
             $result = api('admin/account', 'DELETE', $data);
             return $result;
         }
     }
 
-    public function showListTeleOfUser(Request $request) {
+    public function showListTeleOfUser(Request $request)
+    {
         $result = \api('admin/account', 'GET', ['id' => $request->id]);
         if ($result['status'] == false) {
             return redirect()->back()->with("error", $result['code'])->withInput($request->input());
@@ -155,20 +161,20 @@ class AccountController extends Controller
         return view('pages.accounts.list-of-user', ['id' => $request->id, 'account' => $account]);
     }
 
-    public function postShowListTeleOfUser(Request $request) {
-        $param = $request->all();
-        
-        $page = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
-        $perpage = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
+    public function postShowListTeleOfUser(Request $request)
+    {
+        $param      = $request->all();
+        $page       = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage    = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
 
         //  Get value to search 
         $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
-        
+
         $dataList = [
-            "id"    => $request->id,
-            "limit" => $perpage,
-            "perpage" => $page - 1,
-            "agency" => $searchValue
+            "id"        => $request->id,
+            "limit"     => $perpage,
+            "perpage"   => $page - 1,
+            "agency"    => $searchValue
         ];
 
         $result = api('admin/account-tele', 'GET', $dataList);
@@ -176,59 +182,75 @@ class AccountController extends Controller
             $total = isset($result['total']) ? $result['total'] : count($result['data']);
             $object = [
                 "meta" => [
-                    "page" => $page,
-                    "pages" => ceil($total / $perpage),
+                    "page"      => $page,
+                    "pages"     => ceil($total / $perpage),
                     "perpage"   => $perpage,
                     "total"     => $total,
                 ],
-                "data"  => $result['data']
+                "data" => $result['data']
             ];
         }
-
         return ($object);
     }
 
     //ACCOUNT TELE
 
-    public function listAccountTele() { 
+    public function listAccountTele()
+    {
         $agency = $this->getListAgency();
         return view('pages.accounts.list-tele', ['agency' => $agency]);
     }
 
-    public function showListAccountTele(Request $request) {
-        $param = $request->all();
-        
-        $page = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
-        $perpage = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
+    public function showListAccountTele(Request $request)
+    {
+        $param      = $request->all();
+        $page       = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage    = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
 
         //  Get value to search 
         $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
-        
+
         $dataList = [
-            "limit" => $perpage,
-            "perpage" => $page - 1,
-            "agency" => $searchValue
+            "limit"     => $perpage,
+            "perpage"   => $page - 1,
+            "agency"    => $searchValue
         ];
 
         $result = api('admin/account-tele', 'GET', $dataList);
+
         if ($result['status']) {
             $total = isset($result['total']) ? $result['total'] : count($result['data']);
             $object = [
                 "meta" => [
-                    "page" => $page,
-                    "pages" => ceil($total / $perpage),
+                    "page"      => $page,
+                    "pages"     => ceil($total / $perpage),
                     "perpage"   => $perpage,
                     "total"     => $total,
                 ],
-                "data"  => $result['data']
+                "data" => $result['data']
             ];
         }
 
         return ($object);
     }
 
+    public function shareToAgency(Request $request)
+    {
+        if ($request->ajax()) {
+            $listAccount = $request->dataAccount;
+
+            $data = [
+                'id'        => $listAccount,
+                'agency'    => $request->listAgency
+            ];
+            $result = api('admin/share-to-agency', 'PUT', $data);
+            return $result;
+        }
+    }
+
     // GET LIST AGENCY
-    public function getListAgency() {
+    public function getListAgency()
+    {
         $result = api('admin/agency', 'GET');
         if ($result['status'] == false) {
             return redirect()->back()->with("error", $result['code'])->withInput($request->input());
@@ -236,6 +258,4 @@ class AccountController extends Controller
         $agency = isset($result['data']) ? $result['data'] : '';
         return $agency;
     }
-
-
 }

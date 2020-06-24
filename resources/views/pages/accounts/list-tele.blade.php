@@ -162,6 +162,13 @@
   </div>
 </div>
 
+<?php
+    // dd($agency);
+    $agency = collect($agency)->mapWithKeys(function($value) {
+        return [$value['Id'] => $value['fullname']];
+    })->toJson();
+?>
+
 @endsection
 @section('javascript')
 <script>
@@ -170,6 +177,9 @@
 
 var KTDatatableRemoteAjaxDemo = function() {
 	// Private functions
+
+
+    var listAgency = {!! $agency !!};
 
 	// basic demo
 	var demo = function() {
@@ -253,9 +263,15 @@ var KTDatatableRemoteAjaxDemo = function() {
 					field: 'fullname',
                     title: 'Thuộc đại lý',
                     template: function(data) {
-                        
+                        let result = '';
+                        let idlogin = JSON.parse(data.idlogin);
+                        idlogin.forEach((x) => {
+                            result += `<span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${listAgency[x]}</span>`
+                        });
                         return `
-                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.fullname}</span></span>
+                        <span style="width: 114px;">
+                            ${result}
+                        </span>
                         `
                     }
                 }, 
@@ -276,9 +292,6 @@ var KTDatatableRemoteAjaxDemo = function() {
 					autoHide: false,
 					template: function() {
                         return `
-                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm"  data-toggle="modal" data-target="#exampleModal" title="Chia sẻ">
-							<i class="flaticon-share"></i>
-						</a>
 						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
 							<i class="flaticon2-paper"></i>
 						</a>
@@ -313,18 +326,18 @@ var KTDatatableRemoteAjaxDemo = function() {
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
 
-    const dataAccount = [];
+    let dataAccount = [];
 
     $(".btn_share_account").on('click', () => {
         var listAccount = [];
         let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
         $.when(data.forEach((x) => {
-            listAccount.push(x.value);
+            listAccount.push(''+x.value);
         })).done(() => {
             $(".count-account-share").text(listAccount.length);
         })
 
-        dataAccount.push(listAccount);
+        dataAccount = listAccount;
         // console.log(listAccount);
     })
 
@@ -334,7 +347,34 @@ jQuery(document).ready(function() {
         if (dataAccount !== undefined && dataAccount.length != 0 ) {
             // SHARING
             console.log(listAgency);
-
+            $.ajax({
+                url: '{{ route('accounts.post.shareToAgency') }}',
+                method: 'POST',
+                data: {
+                    _token: $("input[name='_token']").val(),
+                    dataAccount,
+                    listAgency
+                },
+                success: function(data) {
+                    if (data.status == true) {
+							Swal.fire(
+								'Xong!',
+								'Chia sẻ thành công.',
+								'success'
+							);
+							setTimeout(() => {
+								location.reload();
+							}, 1000);
+						} else {
+							Swal.fire(
+								'Thất bại!',
+								'Vui lòng thử lại sau.',
+								'error'
+							)
+						}
+                }
+            });
+            
         }
         else {
             Swal.fire(
