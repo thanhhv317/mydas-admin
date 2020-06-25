@@ -1,5 +1,5 @@
 @extends('layouts.index')
-@section('title', 'Quản lý đại lý')
+@section('title', 'Quản lý tài khoản')
 @section('content')
 
 <div class="kt-content  kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_content">
@@ -32,7 +32,7 @@
                         <i class="kt-font-brand flaticon2-line-chart"></i>
                     </span>
                     <h3 class="kt-portlet__head-title">
-                        Danh sách Tài khoản telegram
+                        Danh sách Tài khoản telegram đại lý 
                     </h3>
                 </div>
                 <div class="kt-portlet__head-toolbar">
@@ -93,15 +93,15 @@
                     <div class="row align-items-center">
                         <div class="col-xl-12 order-2 order-xl-1">
                             <div class="row align-items-center">
-                                <div class="col-md-12 kt-margin-b-20-tablet-and-mobile">
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
-                                        <input type="text" class="form-control" placeholder="Tìm kiếm mã người dùng, tên người dùng hoặc số điện thoại" id="generalSearch">
+                                        <input type="text" class="form-control" placeholder="Tìm kiếm " id="generalSearch">
                                         <span class="kt-input-icon__icon kt-input-icon__icon--left">
                                             <span><i class="la la-search"></i></span>
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile mt-2">
+                                <div class="col-md-6 kt-margin-b-20-tablet-and-mobile">
                                     <div class="kt-input-icon kt-input-icon--left">
                                         <button class="btn btn-info  btn_share_account" data-toggle="modal" data-target="#exampleModal" ><i class="flaticon-share"></i> Chia sẻ</button>
                                     </div>
@@ -162,49 +162,6 @@
   </div>
 </div>
 
-<!-- Modal Undo Sharing Account -->
-<div class="modal fade" id="undosharing" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel2">Chia sẻ tài khoản</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            
-            <h3>Tài khoản <span class="kt-font-primary kt-font-bold account-undo-share"></span></h3>
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="col-form-label">Chọn đại lý:</label>
-            <select multiple="" class="form-control" name="list-agency" id="exampleSelect2">
-                @if(isset($agency))
-                @foreach($agency as $key => $value)
-                    <option value="{{ $value['Id'] }}">{{ $value['fullname'] }}</option>
-                @endforeach
-                @endif
-            </select>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-        <button type="button" class="btn btn-primary btn-undo-sharing">Cập nhật</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<?php
-    // dd($agency);
-    $agency = collect($agency)->mapWithKeys(function($value) {
-        return [$value['Id'] => $value['fullname']];
-    })->toJson();
-?>
-
 @endsection
 @section('javascript')
 <script>
@@ -213,9 +170,6 @@
 
 var KTDatatableRemoteAjaxDemo = function() {
 	// Private functions
-
-
-    var listAgency = {!! $agency !!};
 
 	// basic demo
 	var demo = function() {
@@ -226,10 +180,11 @@ var KTDatatableRemoteAjaxDemo = function() {
 				type: 'remote',
 				source: {
 					read: {
-                        url: '{{ route("accounts.post.showListAccountTele") }}',
+                        url: '{{ route("accounts.post.postShowListTeleOfUser") }}',
                         method: 'post',
                         params: {
                             _token: $("input[name='_token']").val(),
+                            id: {{ isset($id) ? $id : '' }}
                         },
 						// sample custom headers
 						// headers: {'x-my-custom-header': 'some value', 'x-test-header': 'the value'},
@@ -284,10 +239,6 @@ var KTDatatableRemoteAjaxDemo = function() {
                     }
                 },  
                 {
-                    field: 'user_id',
-                    title: 'User ID'
-                },
-                {
 					field: 'first_name',
 					title: 'First name',
                 }, 
@@ -303,39 +254,21 @@ var KTDatatableRemoteAjaxDemo = function() {
 					field: 'fullname',
                     title: 'Thuộc đại lý',
                     template: function(data) {
-                        let result = '';
-                        let idaccount = JSON.parse(data.idaccount);
-                        idaccount.forEach((x) => {
-                            result += `<span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${listAgency[x]}</span>`
-                        });
+                        
                         return `
-                        <span style="width: 114px;">
-                            ${result}
-                        </span>
+                        <span style="width: 114px;"><span class="kt-badge  kt-badge--success kt-badge--inline kt-badge--pill">${data.fullname}</span></span>
                         `
                     }
                 }, 
                 {
 					field: 'username',
-                    title: 'Của user',
+                    title: 'Của người dùng',
                     template: function(data) {
                         return `
                         <span><span class="kt-font-bold kt-font-primary">${data.username}</span></span>                        `;
                     }
-                },
-                {
-                    field: 'Actions',
-                    title: 'Chức năng',
-                    width: 80,
-                    template: function(data) {
-                        console.log(data)
-                        return `
-						<a href="javascript:;" class="btn btn-sm btn-clean undo_sharing_agency" data-lastname="${data.last_name}" data-firstname="${data.first_name}" data-id="${data.user_id}" data-idaccount="${data.idaccount}" data-toggle="modal" data-target="#undosharing" title="Chỉnh sửa">
-							Chức năng
-						</a>`;
-                    }
-                }
-                ],
+				},
+            ],
 
 		});
 
@@ -362,18 +295,18 @@ var KTDatatableRemoteAjaxDemo = function() {
 jQuery(document).ready(function() {
 	KTDatatableRemoteAjaxDemo.init();
 
-    let dataAccount = [];
+    const dataAccount = [];
 
     $(".btn_share_account").on('click', () => {
         var listAccount = [];
         let data = document.querySelectorAll('.kt-checkbox--solid:not(.kt-checkbox--all) > input[type="checkbox"]:checked');
         $.when(data.forEach((x) => {
-            listAccount.push(''+x.value);
+            listAccount.push(x.value);
         })).done(() => {
             $(".count-account-share").text(listAccount.length);
         })
 
-        dataAccount = listAccount;
+        dataAccount.push(listAccount);
         // console.log(listAccount);
     })
 
@@ -383,34 +316,7 @@ jQuery(document).ready(function() {
         if (dataAccount !== undefined && dataAccount.length != 0 ) {
             // SHARING
             console.log(listAgency);
-            $.ajax({
-                url: '{{ route('accounts.post.shareToAgency') }}',
-                method: 'POST',
-                data: {
-                    _token: $("input[name='_token']").val(),
-                    dataAccount,
-                    listAgency
-                },
-                success: function(data) {
-                    if (data.status == true) {
-							Swal.fire(
-								'Xong!',
-								'Chia sẻ thành công.',
-								'success'
-							);
-							setTimeout(() => {
-								location.reload();
-							}, 1000);
-						} else {
-							Swal.fire(
-								'Thất bại!',
-								'Vui lòng thử lại sau.',
-								'error'
-							)
-						}
-                }
-            });
-            
+
         }
         else {
             Swal.fire(
@@ -419,14 +325,6 @@ jQuery(document).ready(function() {
                 'error'
             );
         }
-    })
-
-    $("#ajax_data").on('click', '.undo_sharing_agency', function() {
-        let aid = $(this).data('id');
-        let fna = $(this).data('firstName');
-        let lna = $(this).data('lastName');
-
-        $('.account-undo-share').text(`${fna} ${lna} - ${aid}`);
     })
 });
 

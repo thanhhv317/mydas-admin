@@ -9,7 +9,11 @@ use Validator;
 class AgencyController extends Controller
 {
     public function index() {
-        return view('pages.agencies.list');
+        $result = \api('admin/total-member-in-agency', 'GET');
+
+        $memInAgency = isset($result['data']) ? $result['data'] : ''; 
+
+        return view('pages.agencies.list', ['memInAgency' => $memInAgency]);
     }
 
     public function create() {

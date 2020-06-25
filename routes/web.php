@@ -47,9 +47,11 @@ Route::group(['prefix' => 'accounts', 'middleware' => 'CheckLogin'], function(){
     Route::post('/update', 'AccountController@postUpdate')->name('accounts.get.postUpdate')->middleware('IsAdmin');
     Route::delete('/delete', 'AccountController@deleteMe')->name('accounts.delete.deleteMe')->middleware('IsAdmin');
 
+
     Route::get('/list-of-user/{id}', 'AccountController@showListTeleOfUser')->name('accounts.get.showListTeleOfUser')->middleware('IsAdmin');
     Route::post('/list-of-user', 'AccountController@postShowListTeleOfUser')->name('accounts.post.postShowListTeleOfUser')->middleware('IsAdmin');
 
+    Route::get('/list-of-agency/{id}', 'AccountController@showListTeleOfAgency')->name('accounts.get.showListTeleOfAgency')->middleware('IsAdmin');
 
     //tele
     Route::get('/account-tele', 'AccountController@listAccountTele')->name('accounts.get.listAccountTele');

@@ -102,11 +102,10 @@
                                 </div>
                             </div>
                         </div>
-                        <!--  -->
                     </div>
                 </div>
-
                 <!--end: Search Form -->
+
             </div>
             <div class="kt-portlet__body kt-portlet__body--fit">
 
@@ -121,6 +120,12 @@
     <!-- end:: Content -->
 </div>
 
+<?php 
+	$memInAgency = collect($memInAgency)->mapWithKeys(function($item) {
+		return [$item['id'] => $item['total']];
+	})->toJson();
+?>
+
 @endsection
 @section('javascript')
 <script>
@@ -129,7 +134,7 @@
 
 var KTDatatableRemoteAjaxDemo = function() {
 	// Private functions
-
+	let memInAgency = {!! $memInAgency !!}
 	// basic demo
 	var demo = function() {
 
@@ -203,6 +208,15 @@ var KTDatatableRemoteAjaxDemo = function() {
 				{
 					field: 'domain',
 					title: 'domain',
+				},
+				{
+					field: 'mem',
+					title: 'Số thành viên',
+					template: function(data) {
+						let url = '{{ route("accounts.get.showListTeleOfAgency", 10) }}';
+						url = url.replace('10', data.Id);
+						return  `<span><span class="kt-font-bold kt-font-primary"><a href="${url}">${memInAgency[data.Id]} / ${data.limit_user == 0 ? 'Không giới hạn' : data.limit_user}</a> </span></span>` ;
+					}
 				},
 				{
 					field: 'Actions',

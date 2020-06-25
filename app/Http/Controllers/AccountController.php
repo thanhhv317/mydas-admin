@@ -150,6 +150,8 @@ class AccountController extends Controller
         }
     }
 
+    // show list telegram of a user
+
     public function showListTeleOfUser(Request $request)
     {
         $result = \api('admin/account', 'GET', ['id' => $request->id]);
@@ -171,7 +173,7 @@ class AccountController extends Controller
         $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
 
         $dataList = [
-            "id"        => $request->id,
+            "idaccount" => $request->id,
             "limit"     => $perpage,
             "perpage"   => $page - 1,
             "agency"    => $searchValue
@@ -190,6 +192,46 @@ class AccountController extends Controller
                 "data" => $result['data']
             ];
         }
+        return ($object);
+    }
+
+    //Show list telegram of an agency
+
+    public function showListTeleOfAgency (Request $request) {
+        $id = $request->id;
+        return view('pages.accounts.list-of-agency', ['id' => $id]);
+    }
+
+    public function postShowListTeleOfAgency(Request $request) {
+        $param      = $request->all();
+        $page       = isset($param['pagination']['page']) ? $param['pagination']['page'] : 1;
+        $perpage    = isset($param['pagination']['perpage']) ? $param['pagination']['perpage'] : 10;
+
+        //  Get value to search 
+        $searchValue = isset($param['query']['generalSearch']) ? $param['query']['generalSearch'] : '';
+
+        $dataList = [
+            "limit"     => $perpage,
+            "perpage"   => $page - 1,
+            "agency"    => $searchValue,
+            "idAgency"  => isset($request->id) ? $request->id : ''
+        ];
+
+        $result = api('admin/account-tele', 'GET', $dataList);
+
+        if ($result['status']) {
+            $total = isset($result['total']) ? $result['total'] : count($result['data']);
+            $object = [
+                "meta" => [
+                    "page"      => $page,
+                    "pages"     => ceil($total / $perpage),
+                    "perpage"   => $perpage,
+                    "total"     => $total,
+                ],
+                "data" => $result['data']
+            ];
+        }
+
         return ($object);
     }
 

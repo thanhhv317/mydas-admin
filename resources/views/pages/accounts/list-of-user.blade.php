@@ -268,26 +268,7 @@ var KTDatatableRemoteAjaxDemo = function() {
                         <span><span class="kt-font-bold kt-font-primary">${data.username}</span></span>                        `;
                     }
 				},
-                {
-					field: 'Actions',
-					title: 'Actions',
-					sortable: false,
-					width: 110,
-					overflow: 'visible',
-					autoHide: false,
-					template: function() {
-                        return `
-                        <a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm"  data-toggle="modal" data-target="#exampleModal" title="Chia sẻ">
-							<i class="flaticon-share"></i>
-						</a>
-						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Chỉnh sửa">
-							<i class="flaticon2-paper"></i>
-						</a>
-						<a href="javascript:;" class="btn btn-sm btn-clean btn-icon btn-icon-sm" title="Xóa">
-							<i class="flaticon2-trash"></i>
-						</a>`;
-					},
-				}],
+            ],
 
 		});
 
